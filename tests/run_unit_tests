@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function test_fib {
+	if [ -f ./output/test_fibo.out.$1 ]; then
+	   ./test_fibo $1 > outfile
+	   cmp -s outfile  ./output/test_fibo.out.$1 > /dev/null
+	   if [ $? -eq 1 ]; then
+	      echo "FAIL: test_fibo $1 mismatches"
+	      exit 1
+	   fi
+	   echo "SUCCESS: test_fibo $1"
+	   rm -rf outfile
+	else
+	   echo "FAIL: test_fibo.out.$1 not valid test"
+	   exit 2
+        fi
+} #test_fib
+
+##
+rm -rf outfile
+##
+
+# 0: print 0 values
+test_fib 0
+
+# 1: print 1 value
+test_fib 1
+
+# 9: print 9 values
+test_fib 9
+
+# 94: print 94 values (expected max)
+test_fib 94
+
+# 95: print 95 values (exceeds max)
+test_fib 95
+
+# abc: pass bad input
+test_fib abc
+
+# null: no input
+test_fib
+

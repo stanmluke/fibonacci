@@ -1,0 +1,53 @@
+#!/bin/bash
+port=$1
+
+function test_curl {
+	if [ -f ./output/curl.out.$1 ]; then
+	   curl -s http://localhost:$port/fibonacci/$1 > outfile
+	   cmp -s outfile  ./output/curl.out.$1 > /dev/null
+	   if [ $? -eq 1 ]; then
+	      echo "FAIL: test_curl $1 mismatches"
+	      exit 1
+	   fi
+	   echo "SUCCESS: test_curl $1"
+	   rm -rf outfile
+	else
+	   echo "FAIL: curl.out.$1 not valid test"
+	   exit 2
+        fi
+} #test_curl
+
+
+
+########
+# main #
+########
+if [ -z "$1" ]; then
+    echo "Port argument required"
+    exit 1
+fi
+## cleanup any cruft from previous tests
+rm -rf outfile
+
+
+# 0: print 0 values
+test_curl 0
+
+# 1: print 1 value
+test_curl 1
+
+# 9: print 9 values
+test_curl 9
+
+# 94: print 94 values (expected max)
+test_curl 94
+
+# 95: print 95 values (exceeds max)
+test_curl 95
+
+# abc: pass bad input
+test_curl abc
+
+# null: no input
+test_curl
+

@@ -1,52 +1,50 @@
 #include <iostream>
+#include <sstream>
 #include <map>
+#include <errno.h>
+
 using namespace std;
 //max number for uint64_t has been predetermined to be 93;
 //it is calculatable for n-bits (where φ = (1 + √5)/2)
 //n < 64*(log 2 / log φ) + 1/2*(log 5 / log φ) ≈ 92.19 + 1.67 ≈ 93.86
-#define MAX_INDEX (93)
+#define MAX_INDEX (93)	/* or the first 94 fibonacci #'s */
 
-/* we use a recursive (iterative is more optimal) solution, 
- * just because I wanted to play with a memoize function.
+/* here we are using a recursive solution (iterative is acutally 
+ * more optimal), just because I wanted to entertain a memoize function.
  */
-uint64_t 
-fibo_memoize(unsigned n) {
+int 
+fibo_memoize(unsigned n, uint64_t &fn) {
+	/* NB: for large requests of n, this can consume memory
+	 * (although fibonacci goes exponential quickly, see MAX_INDEX)
+	 * and why an iterative solution would be optimal for both
+	 * space & time consumptions.
+	 */
+	int err;
 	static map<unsigned,uint64_t> memo;
 
 	if (n <= 1) {
-		return n;
+		fn = n;
+		return 0;
+	} else if (n > MAX_INDEX) {
+		cout << "too big" << endl;
+		return E2BIG;
 	}
 	if (memo.count(n) > 0) {
-		return memo[n];
+		fn = memo[n];
+		return 0;
 	}
 	// otherwise
-	uint64_t ret = fibo_memoize(n-1) + fibo_memoize(n-2);
-	memo[n] = ret;
+	uint64_t ret;
+	if (0 == (err = fibo_memoize(n-1, ret))) {
+		memo[n] = ret;
+	} else
+		return err;
+	if (0 == (err = fibo_memoize(n-2, ret))) {
+		memo[n] += ret;
+		fn = memo[n];
+	} else
+		return err;
 
-	return ret;
+	return 0;
 }
 
-/* primitive input handling, but it was non-iteresting.
- * we check for MAX_INDEX since numbers overflow, we could use
- * some kind of bigint handling, if we really cared.
- */
-int main(int argc, char*argv[])
-{
-    int fibo_index = atoi(argv[1]);
-    if (fibo_index < 0) {
-	cerr << "Invalid request: " << fibo_index << endl;
-	return -1;
-    } else if (fibo_index > MAX_INDEX) {
-        cerr << "Invalid max request: " << fibo_index << endl;
-	return -1;
-    }
-    cout << "Fibonacci numbers for n=" << fibo_index << endl;
-    for (int i=0; i<fibo_index; i++) {
-	if (i != 0) { //separator after each number, except first and last
-		cout << ", ";
-	}
-        cout << fibo_memoize(i);
-    }
-    cout << endl;
-    return 0;
-}

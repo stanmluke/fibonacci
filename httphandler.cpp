@@ -87,7 +87,8 @@ static int url_handler (void *cls,
 
     }
 
-    callapi.executeAPI(url, url_args, respdata);
+    unsigned int
+    status_code = callapi.executeAPI(url, url_args, respdata);
 
     *ptr = 0;                  /* reset when done */
     val = MHD_lookup_connection_value (connection, MHD_GET_ARGUMENT_KIND, "q");
@@ -109,7 +110,7 @@ static int url_handler (void *cls,
     MHD_add_response_header(response, "Content-Type", "text");
     MHD_add_response_header(response, "OurHeader", type);
 
-    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    ret = MHD_queue_response (connection, status_code, response);
     MHD_destroy_response (response);
     return ret;
 }

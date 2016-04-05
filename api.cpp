@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <string.h>
-
+#include <microhttpd.h>
 #include "api.hpp"
 
 using namespace std;
@@ -34,30 +34,38 @@ api::api()
 {
 }
 
-bool 
+unsigned int 
 api::executeAPI(const string& url, const map<string, string>& argvals, string& response)
 {
-    Executor::outputType type = Executor::TYPE_XML; /* someday support JSON? */
     validate_data vdata ;
     vdata.api = url;
     vdata.fields = split(url, '/');
 
     if ( !_validate(&vdata)) {
         _getInvalidResponse(response);
-        return false;
+        return MHD_HTTP_BAD_REQUEST;
     }
 
-    return _executeAPI(vdata.fields[0], vdata.fields[1], type, response);
+    return _executeAPI(vdata.fields[0], vdata.fields[1], response);
 }
 
-bool 
+unsigned int 
 api::_executeAPI(const string& urlobj, const string& val, 
-        Executor::outputType type, string& response)
+		string& response)
 {
-    bool ret = false;
+    unsigned int ret = MHD_HTTP_OK;
+    bool did_fib = false;
     std::cout  << "DEBUG_executeAPI urlobj=" << urlobj << std::endl;
-    if (urlobj == "fibonacci")
-        ret = _executor.fibonacci(val, type, response);
+    if (urlobj == "fibonacci") {
+        did_fib = _executor.fibonacci(val, response);
+	if (false == did_fib) {
+		_getInvalidResponse(response);
+		return MHD_HTTP_BAD_REQUEST;
+	}
+    } else {
+        _getInvalidResponse(response);
+        return MHD_HTTP_BAD_REQUEST;
+    }
 
     return ret;
 }
@@ -100,6 +108,6 @@ api::_validate(const void *data)
 void 
 api::_getInvalidResponse(string& response)
 {
-    response = "Some error in your data ";
+    response = "<html><head><title>Invalid Request</title></head><body>requested value is invalid</body></html>";
 }
 

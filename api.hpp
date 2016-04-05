@@ -17,13 +17,12 @@ class api
 {
 public:
     api();
-    bool executeAPI(const string& url, const map<string, string>& argval, 
-            string& response);
+    unsigned int executeAPI(const string& url, 
+				const map<string, string>& argval, string& response);
 private:
     Executor _executor;
     bool _validate(const void*  data);
-    bool _executeAPI(const string& urlobj, const string& val, 
-            Executor::outputType type, string& response);
+    unsigned int _executeAPI(const string& urlobj, const string& val, string& response);
     void _getInvalidResponse(string& response);
 };
 

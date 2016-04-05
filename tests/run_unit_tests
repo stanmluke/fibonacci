@@ -41,3 +41,6 @@ test_fib abc
 # null: no input
 test_fib
 
+# -1: negative 
+test_fib -1
+

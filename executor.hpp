@@ -17,9 +17,9 @@ public:
         TYPE_JSON, TYPE_XML   
     };
     Executor();
-    bool fibonacci(const string& val, outputType type, string& response);
+    bool fibonacci(const string& val, string& response);
 private:
-    void _generateOutput(string data, outputType type, string& output);
+    void _generateOutput(string data, string& output);
 
 };
 

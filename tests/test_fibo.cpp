@@ -19,14 +19,9 @@ main(int argc, char*argv[])
 	cout << "count missing" << endl;
 	return EINVAL;
     }
-    int fibo_index = strtol(argv[1], &endc, 10);
-    if (errno || *endc != '\0') {
-	cout << "invalid input:" << argv[1] << ", errno=" << errno << endl;
-	return EINVAL;
-    }
     int ret = 0;
     string response;
-    ret = _executor.fibonacci(argv[1], ourapi::Executor::TYPE_XML, response);
+    ret = _executor.fibonacci(argv[1], response);
     
     return 0;
 }

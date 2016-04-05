@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -15,7 +16,7 @@ Executor::Executor()
 }
 
 bool 
-Executor::fibonacci(const string& val, outputType type, 
+Executor::fibonacci(const string& val,
         string& response)
 {
     bool pingtest = false;
@@ -23,7 +24,7 @@ Executor::fibonacci(const string& val, outputType type,
 
     char *endc;
     int fibo_index = strtol(val.c_str(), &endc, 10);
-    if (*endc != '\0') {
+    if (errno || (*endc != '\0') || (fibo_index < 0)) {
 	std::cout << "invalid input:" << val.c_str() << ", errno=" << errno << std::endl;
 	return false;
     }
@@ -45,29 +46,16 @@ Executor::fibonacci(const string& val, outputType type,
 	}
     }
 
-    _generateOutput(osstr.str(), TYPE_XML, response);
+    _generateOutput(osstr.str(), response);
     std::cout << response << std::endl;
     return true;
 }
 
 void 
-Executor::_generateOutput(string data, outputType type, string& output)
+Executor::_generateOutput(string data, string& output)
 {
-    /* only TYPE_XML supported for now */
-
-    string xml_head("<?xml version=\"1.0\"?>\n"
-		"<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n"
-		"<xs:element name=\"ulongvalues\" type=\"valuelist\"/>\n"
-		"<xs:simpleType name=\"valuelist\">\n"
-		"\t<xs:list itemType=\"xs:unsignedLong\"/>\n"
-		"</xs:simpleType>\n");
-    string xml_foot("</xs:schema>\n");
-    string val_head("<ulongvalues>");
-    string val_foot("</ulongvalues>");
-    if (TYPE_JSON == type) {
-        //write_json(ostr, data);
-    } else if (TYPE_XML == type) {
-	output = xml_head + val_head + data + val_foot + xml_foot;
-    }
-    return;
+#define HEADER "<html><head><title>Fibonacci values</title></head><body>"
+#define FOOTER "</body></html>"
+	output = HEADER + data + FOOTER;
+	return;
 }

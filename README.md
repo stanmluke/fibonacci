@@ -10,7 +10,7 @@ The following are expectation on the environment:
 - - curl for unit-tests
 
 
-A quick and dirty make.sh is used to build the executables.
+Makefile
 - - the 'fibo_api' starts the code, you must specify some unused port e.g. "fibo_api 1234"
 
 To unit-test and validate the code, see the 'tests' sub-directory:

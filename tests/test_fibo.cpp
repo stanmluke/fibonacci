@@ -14,7 +14,6 @@ int
 main(int argc, char*argv[])
 {
     ourapi::Executor _executor;
-    char *endc;
     if (argc < 2) {
 	cout << "count missing" << endl;
 	return EINVAL;

@@ -56,7 +56,6 @@ static int url_handler (void *cls,
     const char *upload_data, size_t *upload_data_size, void **ptr)
 {
     static int aptr;
-    const char *fmt = (const char *)cls;
     const char *val;
     char *me;
     const char *typexml = "xml";

@@ -19,9 +19,6 @@ bool
 Executor::fibonacci(const string& val,
         string& response)
 {
-    bool pingtest = false;
-    bool do_fibo  = false;
-
     char *endc;
     int fibo_index = strtol(val.c_str(), &endc, 10);
     if (errno || (*endc != '\0') || (fibo_index < 0)) {
